@@ -1,0 +1,18 @@
+{
+    "7977587238": {
+        "stage": "tech_support",
+        "com_name": "default",
+        "mo_name": "Lenovo L14",
+        "user_name": "Sagar Murli Agicha",
+        "last_time": "0",
+        "session_key": "765a8672-d10a-4dbb-a848-314c3b1349ab",
+        "pdf_file": "/home/sagar/Master_pdfs/pdfs/lenovo_l14.pdf",
+        "vector_file": "/home/sagar/Master_pdfs/encodings/lenovo_l14.npy",
+        "chunks_file": "/home/sagar/Master_pdfs/chunks/lenovo_l14.pkl",
+        "last_uuid": [
+            "<module 'uuid' from '/usr/lib/python3.10/uuid.py'>",
+            "<module 'uuid' from '/usr/lib/python3.10/uuid.py'>"
+        ],
+        "solution_type": "DT"
+    }
+}
