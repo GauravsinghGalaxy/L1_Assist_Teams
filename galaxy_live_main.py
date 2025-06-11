@@ -17,11 +17,7 @@ import json
 import os
 from typing import List, Optional, Dict
 from guardrails import Guard
-# from guardrails_hub.toxic_language import ToxicLanguage 
-from sentence_transformers import SentenceTransformer
-# from guardrails_ai import Guardrails
-# from guardrails_ai.hub import ToxicLanguage, ProfanityFree
-# from guardrails_hub.toxic_language import ToxicLanguage
+from guardrails.hub import ToxicLanguage, ProfanityFree
 from transformers import pipeline
 from sentence_transformers import SentenceTransformer
 classifier = pipeline("text-classification", model="unitary/toxic-bert")
@@ -95,9 +91,10 @@ client = openai.OpenAI(
 )
 
 
-# guard = Guard().use(
-#     ToxicLanguage(threshold=0.8)  # Old initialization style
-# )
+Guard = Guard().use_many(
+    ToxicLanguage(validation_method="sentence", threshold=0.8),
+    ProfanityFree()
+)
 try:
     conn = pyodbc.connect(
         f"DRIVER={{ODBC Driver 17 for SQL Server}};"
