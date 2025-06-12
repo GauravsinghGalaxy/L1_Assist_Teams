@@ -2,6 +2,7 @@ import torch
 import pickle
 import numpy as np
 from transformers import DPRContextEncoder, DPRContextEncoderTokenizer
+# from transformers import DPRQuestionEncoderTokenizer, DPRQuestionEncoder
 import rag_samba_continuous_function as rag
 
 default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
@@ -10,7 +11,9 @@ default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
 
 # ✅ Just add the new PDF here
 unique_laptop = {
-    'lenovo_Thinkbook_14.pdf': 'lenovo_Thinkbook_14.pdf'
+    'lenovo_l14.pdf': 'lenovo_l14.pdf',
+    'lenovo Thinkbook 14':'lenovo_thinkbook_14.pdf'
+
 }
 
 # ✅ Load model & tokenizer once
@@ -47,26 +50,3 @@ for name, pdf_file in unique_laptop.items():
 
         print(f"✅ Done: {pdf_file}")
 
-
-import json
-
-
-import json
-
-# # ✅ Update user data JSON
-# userdata_path = "/home/sagar/L1_Assist_Teams/user_data.json"  # Replace with correct path if different
-# pdf_name = "lenovo_Thinkbook_14.pdf"
-# name="lenovo_Thinkbook_14"
-# base_name = pdf_name  # You can also use pdf_name.split(".")[0] if needed without ".pdf"
-
-# with open(userdata_path, 'r') as f:
-#     user_data = json.load(f)
-
-# user_data["9594947530"]["pdf_file"] = f"/home/sagar/Master_pdfs/pdfs/{pdf_name}"
-# user_data["9594947530"]["vector_file"] = f"/home/sagar/Master_pdfs/encodings/{name}.npy"
-# user_data["9594947530"]["chunks_file"] = f"/home/sagar/Master_pdfs/chunks/{name}.pkl"
-
-# with open(userdata_path, 'w') as f:
-#     json.dump(user_data, f, indent=4)
-
-# print("✅ userdata.json updated.")

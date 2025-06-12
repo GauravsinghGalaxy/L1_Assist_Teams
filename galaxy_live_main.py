@@ -9,7 +9,10 @@ import pytz
 from torch import device
 import torch
 from twilio.rest import Client
-from transformers import (DPRContextEncoder, DPRContextEncoderTokenizer)
+# from transformers import (DPRContextEncoder, DPRContextEncoderTokenizer)
+from transformers import (DPRQuestionEncoderTokenizer, DPRQuestionEncoder)
+
+
 import datetime as dt 
 import pyodbc
 import openai
@@ -113,6 +116,7 @@ adapter_settings = BotFrameworkAdapterSettings(APP_ID, APP_PASSWORD)
 adapter = BotFrameworkAdapter(adapter_settings)
 
 recent_activity_ids = set()
+
 
 def check_text_content(text):
     try:
@@ -850,6 +854,8 @@ async def messages(req):
         aad_id = from_user.aad_object_id
         email = "Not found"
 
+        
+
         # Get user email from Microsoft Graph if AAD ID is available
         if aad_id:
             access_token = await get_graph_token()
@@ -882,6 +888,16 @@ async def messages(req):
         recent_activity_ids.add(activity.id)
         if len(recent_activity_ids) > 10:
             recent_activity_ids.clear()
+
+        # if phone_number !="9594947530" and activity.id in recent_activity_ids:
+        #     print(f"[Deduplicated] Activity {activity.id} already processed.\n")
+        #     return
+        
+        recent_activity_ids.add(activity.id)
+        if len(recent_activity_ids)>10:
+            recent_activity_ids.clear()
+
+
         
         if activity.attachments:
             for attachment in activity.attachments:
@@ -1037,7 +1053,7 @@ async def messages(req):
                             default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
                             default_encode_path = "/home/sagar/Master_pdfs/encodings/"
                             default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
-                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':'Not Found', 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
+                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':"lenovo_l14.pdf       ", 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
                                              'Latitude 3420':'dell_latitude_3420.pdf', 'K 14':'lenovo_k14.pdf', 'Lenovo X1 Yoga 6th Gen':'lenovo_X1_Yoga_Gen_6.pdf', 
                                              'DELL Latitude 7440':'Not Found', 'Lenovo V14':'lenove_v14.pdf', 'MicroSoft Surface Laptop Go 3':'microsoft_surface_go_3.pdf',
                                              'Yoga Duet 7-13ITL6':'Not Found', 'Dell Latitude 7420':'dell_latitude_7420.pdf', 'Latitude 3420':'dell_latitude_3420.pdf'}
