@@ -1053,7 +1053,7 @@ async def messages(req):
                             default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
                             default_encode_path = "/home/sagar/Master_pdfs/encodings/"
                             default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
-                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':"lenovo_l14.pdf       ", 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
+                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':"lenovo_l14.pdf", 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
                                              'Latitude 3420':'dell_latitude_3420.pdf', 'K 14':'lenovo_k14.pdf', 'Lenovo X1 Yoga 6th Gen':'lenovo_X1_Yoga_Gen_6.pdf', 
                                              'DELL Latitude 7440':'Not Found', 'Lenovo V14':'lenove_v14.pdf', 'MicroSoft Surface Laptop Go 3':'microsoft_surface_go_3.pdf',
                                              'Yoga Duet 7-13ITL6':'Not Found', 'Dell Latitude 7420':'dell_latitude_7420.pdf', 'Latitude 3420':'dell_latitude_3420.pdf'}
