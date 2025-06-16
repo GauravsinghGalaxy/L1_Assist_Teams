@@ -6,3 +6,7 @@ __pycache__/
 *.pth
 uploads/
 venv/
+*.env
+secrets.json
+*.key
+*.pem
