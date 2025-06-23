@@ -1,5 +1,6 @@
 import os
 import aiohttp
+import json
 import random
 from aiohttp import web
 from botbuilder.core import BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext
@@ -9,10 +10,7 @@ import pytz
 from torch import device
 import torch
 from twilio.rest import Client
-# from transformers import (DPRContextEncoder, DPRContextEncoderTokenizer)
-from transformers import (DPRQuestionEncoderTokenizer, DPRQuestionEncoder)
-
-
+# from transformers import DPRQuestionEncoder, DPRQuestionEncoderTokenizer    
 import datetime as dt 
 import pyodbc
 import openai
@@ -1053,10 +1051,9 @@ async def messages(req):
                             default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
                             default_encode_path = "/home/sagar/Master_pdfs/encodings/"
                             default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
-                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':"lenovo_l14.pdf", 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
-                                             'Latitude 3420':'dell_latitude_3420.pdf', 'K 14':'lenovo_k14.pdf', 'Lenovo X1 Yoga 6th Gen':'lenovo_X1_Yoga_Gen_6.pdf', 
-                                             'DELL Latitude 7440':'Not Found', 'Lenovo V14':'lenove_v14.pdf', 'MicroSoft Surface Laptop Go 3':'microsoft_surface_go_3.pdf',
-                                             'Yoga Duet 7-13ITL6':'Not Found', 'Dell Latitude 7420':'dell_latitude_7420.pdf', 'Latitude 3420':'dell_latitude_3420.pdf'}
+
+                            with open("pdf_mappings.json",'r')as f:
+                                unique_laptop=json.load(f)
                             
                             if mo_name in unique_laptop:
                                 pdf_file = default_pdf_path + unique_laptop[mo_name]
@@ -1182,6 +1179,9 @@ async def messages(req):
                         no_variations = ["no", "not", "nope", "nah", "wrong", "incorrect", "nahi", "na"]
                         session_key = get_stage(phone_number).get("session_key", "")
 
+
+        
+
                         cursor.execute("""
                             SELECT assets_serial_number
                             FROM l1_tree 
@@ -1194,12 +1194,13 @@ async def messages(req):
                         # Direct string matching instead of embeddings
                         user_response = user_response.strip().lower()
                         
+                        
                         if solution_type == "shutdown":
                             ist_timezone = pytz.timezone("Asia/Kolkata")
                             current_datetime = dt.datetime.now(ist_timezone)
                             
                             uuid_id = activity.conversation.id
-                            #ession_key = str(uuid.uuid4())
+                            #session_key = str(uuid.uuid4())
                             session_key = get_stage(phone_number).get("session_key", "")
                             issue = "Ram Upgrade"
                             cursor.execute(
