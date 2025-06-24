@@ -495,7 +495,7 @@ def data_store(issue: str, remote_phone: str, uuid_id: str, session_id: str):
     conn.close()
    
     return "Done"
-current_last_uuid = get_stage().get("last_uuid", [])
+
 
 
 def check_query_type(message: str, phone_number: str, current_last_uuid: list):
@@ -935,6 +935,7 @@ async def messages(req):
                     stage_data = get_stage(phone_number)
                     current_stage = stage_data.get('stage', '')
                     rag_no = stage_data.get('rag_no', 0)
+                    current_last_uuid = stage_data.get("last_uuid", [])
                     solution_type = stage_data.get('solution_type', "0")
                         
                     if get_stage(phone_number) == {}:
@@ -1056,6 +1057,7 @@ async def messages(req):
                             default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
                             default_encode_path = "/home/sagar/Master_pdfs/encodings/"
                             default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
+                            vector_file = encodings_filename
 
                             with open("pdf_mappings.json",'r')as f:
                                 unique_laptop=json.load(f)
@@ -1065,7 +1067,9 @@ async def messages(req):
                                 encodings_filename = default_encode_path + f"{unique_laptop[mo_name].split('.')[0]}.npy"
                                 chunks_filename = default_chunks_path + f"{unique_laptop[mo_name].split('.')[0]}.pkl"
 
-                            vector_file = encodings_filename
+                                vector_file = encodings_filename
+
+                            
                             set_stage("tech_support", phone_number, com_name, mo_name, username, pdf_file=pdf_file, vector_file=vector_file, chunks_file=chunks_filename)
                             result = "Great! I'll use specialized support for your model. What seems to be the problem?"
                             ist_timezone = pytz.timezone("Asia/Kolkata")
@@ -1210,13 +1214,17 @@ async def messages(req):
                             pdf_path = default_pdf_path + file_name
                             encodings_path = default_encode_path + f"{file_key}.npy"
                             chunks_path = default_chunks_path + f"{file_key}.pkl"
+
+                            pdf_file = pdf_path
+                            vector_file = encodings_path
+                            chunks_file = chunks_path
                             
 
 
                             #  Save info into session for future use
                             set_stage(stage="tech_support", phone_number=phone_number,
                                        pdf_file=pdf_path,
-                                       vector_file=encodings_path,
+                                       vector_file=vector_file,
                                        chunks_file=chunks_path,
                                        conversation_history=[],
                                        solution_type="0",
@@ -2155,7 +2163,7 @@ async def messages(req):
                                             conn.commit()
                                             clear_stage(phone_number)
                                             data_store(issue, phone_number, activity.conversation.id, session_key)
-                                            #set_stage(stage="tech_support", phone_number=phone_number, last_uuid=current_last_uuid)
+                                            set_stage(stage="tech_support", phone_number=phone_number, last_uuid=current_last_uuid)
                                             await turn_context.send_activity("Thank you for contacting us. Currently All the Agents are Busy\nGenerating Ticket --")
                                             return
                                         

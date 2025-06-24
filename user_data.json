@@ -5,9 +5,13 @@
         "mo_name": "Lenovo Thinkbook 14",
         "user_name": "Gaurav Singh",
         "last_time": "0",
-        "session_key": "940dd9a7-8b6f-4512-bd0e-661ccba95382",
+        "session_key": "abae014f-680e-4e01-bfec-a13064cdf57a",
         "pdf_file": "/home/sagar/Master_pdfs/pdfs/dell_latitude_3420.pdf",
         "vector_file": "/home/sagar/Master_pdfs/encodings/dell_latitude_3420.npy",
-        "chunks_file": "/home/sagar/Master_pdfs/chunks/dell_latitude_3420.pkl"
+        "chunks_file": "/home/sagar/Master_pdfs/chunks/dell_latitude_3420.pkl",
+        "last_uuid": [
+            "<module 'uuid' from '/usr/lib/python3.10/uuid.py'>"
+        ],
+        "solution_type": "RAG"
     }
 }
