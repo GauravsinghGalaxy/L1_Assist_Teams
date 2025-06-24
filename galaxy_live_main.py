@@ -495,6 +495,8 @@ def data_store(issue: str, remote_phone: str, uuid_id: str, session_id: str):
     conn.close()
    
     return "Done"
+current_last_uuid = get_stage().get("last_uuid", [])
+
 
 def check_query_type(message: str, phone_number: str, current_last_uuid: list):
     """Background task to determine query type and store result"""
