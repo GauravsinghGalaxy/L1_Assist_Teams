@@ -282,7 +282,7 @@ def clear_stage(phone_number: str):
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    return "Stage cleared successfully"
+    return "Stage cleared successfully"     
 
 def get_best_matching_tag(user_query):
     # Fetch all distinct tags and strip extra whitespace
