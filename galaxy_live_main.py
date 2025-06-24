@@ -883,9 +883,9 @@ async def messages(req):
         if activity.id in recent_activity_ids:
             print(f"[Deduplicated] Activity {activity.id} already processed.\n")
             return
-        recent_activity_ids.add(activity.id)
-        if len(recent_activity_ids) > 10:
-            recent_activity_ids.clear()
+        # recent_activity_ids.add(activity.id)
+        # if len(recent_activity_ids) > 10:
+        #     recent_activity_ids.clear()
 
         # if phone_number !="9594947530" and activity.id in recent_activity_ids:
         #     print(f"[Deduplicated] Activity {activity.id} already processed.\n")
@@ -909,6 +909,9 @@ async def messages(req):
                 print(f"URL: {content_url}")
 
         if activity.type == ActivityTypes.message:
+            user_response = activity.text.lower()
+            yes_variations = ["yes", "yeah", "yep", "sure", "correct", "right", "ok", "okay", "perfect", "haa"]
+            no_variations = ["no", "not", "nope", "nah", "wrong", "incorrect", "nahi", "na"]
             # Use email from Graph API if available, otherwise use the one from activity
             user_validation = check_text_content(activity.text)
             if user_validation['is_valid']:
@@ -1172,16 +1175,56 @@ async def messages(req):
                         conversation_history = stage_data.get('conversation_history', [])
                         solution_type = stage_data.get('solution_type', "0")
                         vector_file = stage_data.get('vector_file')
-                        current_last_uuid = get_stage(phone_number).get("last_uuid", [])
                         rag_no = stage_data.get('rag_no', 0)
                         user_response = activity.text.lower()
+                        current_last_uuid = get_stage(phone_number).get("last_uuid", [])
+                        session_key = get_stage(phone_number).get("session_key", "")
                         yes_variations = ["yes", "yeah", "yep", "sure", "correct", "right", "ok", "okay", "perfect", "haa"]
                         no_variations = ["no", "not", "nope", "nah", "wrong", "incorrect", "nahi", "na"]
-                        session_key = get_stage(phone_number).get("session_key", "")
+                        
 
 
-        
+                    elif get_stage(phone_number)["stage"] == "no_data":
+                        model_name = activity.text.strip()
+                            # Load model-to-pdf mapping from JSON
+                        with open("pdf_mappings.json", "r") as f:
+                            unique_laptop = json.load(f)
 
+                         # Case-insensitive matching
+                        matched_model = None
+                        for key in unique_laptop:
+                            if model_name.lower() == key.lower():
+                                matched_model = key
+                                break
+
+                        if matched_model:
+                            file_name = unique_laptop[matched_model]
+                            file_key = file_name.split('.')[0]
+
+                            default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
+                            default_encode_path = "/home/sagar/Master_pdfs/encodings/"
+                            default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
+
+                            pdf_path = default_pdf_path + file_name
+                            encodings_path = default_encode_path + f"{file_key}.npy"
+                            chunks_path = default_chunks_path + f"{file_key}.pkl"
+                            
+
+
+                            #  Save info into session for future use
+                            set_stage(stage="tech_support", phone_number=phone_number,
+                                       pdf_file=pdf_path,
+                                       vector_file=encodings_path,
+                                       chunks_file=chunks_path,
+                                       conversation_history=[],
+                                       solution_type="0",
+                                       rag_no=0)
+                            
+                            await turn_context.send_activity(f"Great! Got your model: {matched_model}. How can I help you?")
+                        else:
+                            await turn_context.send_activity(f" Sorry, I don't have data for model: {model_name}. Please recheck spelling or try another.")
+
+                            
                         cursor.execute("""
                             SELECT assets_serial_number
                             FROM l1_tree 

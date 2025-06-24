@@ -5,32 +5,9 @@
         "mo_name": "Lenovo Thinkbook 14",
         "user_name": "Gaurav Singh",
         "last_time": "0",
-        "session_key": "f5615e2a-fbbc-4fea-bc61-8b059e0430dd",
-        "pdf_file": "/home/sagar/Master_pdfs/pdfs/lenovo_l14.pdf",
-        "vector_file": "/home/sagar/Master_pdfs/encodings/lenovo_l14.npy",
-        "chunks_file": "/home/sagar/Master_pdfs/chunks/lenovo_l14.pkl",
-        "last_uuid": [
-            "<module 'uuid' from '/usr/lib/python3.10/uuid.py'>"
-        ],
-        "solution_type": "RAG",
-        "conversation_history": [
-            {
-                "role": "system",
-                "content": "You are a helpful technical support assistant for Lenovo Thinkbook 14 Serial Number: LR0F4Q04 laptops. \n                                                                Your responses should follow these rules:\n\n                                                                1. Provide ONE solution at a time, clearly labeled as \"Step numbers [1, 2, n]: [solution]\"\n                                                                2. Keep responses clear and concise\n                                                                3. Use professional yet friendly tone\n                                                                4. Include relevant context from the manual when applicable\n                                                                5. After providing a solution, ask \"Please try this step and let me know if you need any clarification\"\n                                                                6. If the solution worked, ask if they need help with anything else\n                                                                7. If the solution didn't work, provide the next step\n                                                                8. After 3 attempts, if user agrees to connect with agent, respond with exactly \"connect agent = true\"\n                                                                9. Otherwise, continue providing solutions one at a time\n\n                                                                Example conversation flow:\n                                                                User: \"I can't connect to the printer\"\n                                                                Assistant: \"Step 1: Let's check your network connection first. Open Windows Settings and verify you're connected to the correct network. Please try this step and let me know if you need any clarification.\"\n                                                                User: \"I'm connected to the right network\"\n                                                                Assistant: \"Step 2: Great! Now let's try adding the printer. Open Windows Settings > Printers & Scanners > Add a printer. Please try this step and let me know if you need any clarification.\"\n                                                                User: \"I can see the printer but can't connect\"\n                                                                Assistant: \"Step n: Let's try resetting the printer connection. First, remove the existing printer from your system. Please try this step and let me know if you need any clarification.\"\n\n                                                                If the user's response is unclear, ask for clarification.\n                                                                If they're still having issues after multiple attempts, suggest connecting with a live agent."
-            },
-            {
-                "role": "user",
-                "content": "wifi is not connecting"
-            },
-            {
-                "role": "system",
-                "content": "Context from Lenovo Thinkbook 14 Serial Number: LR0F4Q04 manual:\nChapter 1. Meet your computer\nFront view\nL14 Gen 4\nItem\nDescription\nItem\nDescription\nInfrared camera / Camera\nWebcam privacy shutter\nMicrophone\nTouch screen\nPower button with/without fingerprint \nreader \nTrackPoint\u00ae pointing stick\n\u00a9 Copyright Lenovo 2023, 2024\n1\nItem\nDescription\nItem\nDescription\nNFC (near field communication) mark \nTrackpad\nTrackPoint Three Buttons\nSpeaker\n* for selected models\nL15 Gen 4\nItem\nDescription\nItem\nDescription\nInfrared camera / Camera\nWebcam privacy shutter\nMicrophone\nTouch screen\nPower button with/without fingerprint \nreader \nTrackPointTrackpad\u00ae pointing stick\n2\nThinkPad L14 Gen 4 and L15 Gen 4 User Guide\nItem\nDescription\nItem\nDescription\nNFC (near field communication) mark \nTrackpad\nTrackPoint Three Buttons\nSpeaker\n* for selected models\nWebcam privacy shutter\nSlide the webcam privacy shutter to cover or uncover the camera lens. It is designed to protect your privacy.\nRelated topics\n\u2022 \u201cUse the TrackPoint pointing device\u201d on page 14\n\u2022 \u201cUse the trackpad\u201d on page 16\n\u2022 \u201cUse the touch screen (for selected models)\u201d on page 17\n\u2022 \u201cSet up an NFC connection (for selected models)\u201d on page 26\n\u2022 \u201cLog in with your fingerprint (for selected models)\u201d on page 29\n\u2022 \u201cLog in with your face ID (for selected models)\u201d on page 30\nChapter 1. Meet your computer\n3\n"
-            },
-            {
-                "role": "assistant",
-                "content": "step 1: restart your wi-fi by switching it off for 10 seconds and then turning it back on. this simple step can often resolve connectivity issues. please try this step and let me know if you need any clarification.\n\nplease try this step and let me know if you need any clarification."
-            }
-        ],
-        "rag_no": 1
+        "session_key": "5751ee3f-ae2a-401b-8738-a5aea32a7b4e",
+        "pdf_file": "/home/sagar/Master_pdfs/pdfs/dell_latitude_3420.pdf",
+        "vector_file": "/home/sagar/Master_pdfs/encodings/dell_latitude_3420.npy",
+        "chunks_file": "/home/sagar/Master_pdfs/chunks/dell_latitude_3420.pkl"
     }
 }
