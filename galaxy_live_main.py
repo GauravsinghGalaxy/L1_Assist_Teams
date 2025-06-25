@@ -1,5 +1,6 @@
 import os
 import aiohttp
+import json
 import random
 from aiohttp import web
 from botbuilder.core import BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext
@@ -9,10 +10,7 @@ import pytz
 from torch import device
 import torch
 from twilio.rest import Client
-# from transformers import (DPRContextEncoder, DPRContextEncoderTokenizer)
-from transformers import (DPRQuestionEncoderTokenizer, DPRQuestionEncoder)
-
-
+# from transformers import DPRQuestionEncoder, DPRQuestionEncoderTokenizer    
 import datetime as dt 
 import pyodbc
 import openai
@@ -284,7 +282,7 @@ def clear_stage(phone_number: str):
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    return "Stage cleared successfully"
+    return "Stage cleared successfully"     
 
 def get_best_matching_tag(user_query):
     # Fetch all distinct tags and strip extra whitespace
@@ -497,6 +495,8 @@ def data_store(issue: str, remote_phone: str, uuid_id: str, session_id: str):
     conn.close()
    
     return "Done"
+
+
 
 def check_query_type(message: str, phone_number: str, current_last_uuid: list):
     """Background task to determine query type and store result"""
@@ -885,9 +885,9 @@ async def messages(req):
         if activity.id in recent_activity_ids:
             print(f"[Deduplicated] Activity {activity.id} already processed.\n")
             return
-        recent_activity_ids.add(activity.id)
-        if len(recent_activity_ids) > 10:
-            recent_activity_ids.clear()
+        # recent_activity_ids.add(activity.id)
+        # if len(recent_activity_ids) > 10:
+        #     recent_activity_ids.clear()
 
         # if phone_number !="9594947530" and activity.id in recent_activity_ids:
         #     print(f"[Deduplicated] Activity {activity.id} already processed.\n")
@@ -911,6 +911,9 @@ async def messages(req):
                 print(f"URL: {content_url}")
 
         if activity.type == ActivityTypes.message:
+            user_response = activity.text.lower()
+            yes_variations = ["yes", "yeah", "yep", "sure", "correct", "right", "ok", "okay", "perfect", "haa"]
+            no_variations = ["no", "not", "nope", "nah", "wrong", "incorrect", "nahi", "na"]
             # Use email from Graph API if available, otherwise use the one from activity
             user_validation = check_text_content(activity.text)
             if user_validation['is_valid']:
@@ -932,6 +935,7 @@ async def messages(req):
                     stage_data = get_stage(phone_number)
                     current_stage = stage_data.get('stage', '')
                     rag_no = stage_data.get('rag_no', 0)
+                    current_last_uuid = stage_data.get("last_uuid", [])
                     solution_type = stage_data.get('solution_type', "0")
                         
                     if get_stage(phone_number) == {}:
@@ -1053,17 +1057,19 @@ async def messages(req):
                             default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
                             default_encode_path = "/home/sagar/Master_pdfs/encodings/"
                             default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
-                            unique_laptop = {'Lenovo L14':'lenovo_l14.pdf', 'Lenovo Thinkbook 14':"lenovo_l14.pdf", 'Lenovo Thinkpad E14 Gen5':'lenovo_e14.pdf', 'L470' : 'lenovo_e14.pdf', 
-                                             'Latitude 3420':'dell_latitude_3420.pdf', 'K 14':'lenovo_k14.pdf', 'Lenovo X1 Yoga 6th Gen':'lenovo_X1_Yoga_Gen_6.pdf', 
-                                             'DELL Latitude 7440':'Not Found', 'Lenovo V14':'lenove_v14.pdf', 'MicroSoft Surface Laptop Go 3':'microsoft_surface_go_3.pdf',
-                                             'Yoga Duet 7-13ITL6':'Not Found', 'Dell Latitude 7420':'dell_latitude_7420.pdf', 'Latitude 3420':'dell_latitude_3420.pdf'}
+                            vector_file = encodings_filename
+
+                            with open("pdf_mappings.json",'r')as f:
+                                unique_laptop=json.load(f)
                             
                             if mo_name in unique_laptop:
                                 pdf_file = default_pdf_path + unique_laptop[mo_name]
                                 encodings_filename = default_encode_path + f"{unique_laptop[mo_name].split('.')[0]}.npy"
                                 chunks_filename = default_chunks_path + f"{unique_laptop[mo_name].split('.')[0]}.pkl"
 
-                            vector_file = encodings_filename
+                                vector_file = encodings_filename
+
+                            
                             set_stage("tech_support", phone_number, com_name, mo_name, username, pdf_file=pdf_file, vector_file=vector_file, chunks_file=chunks_filename)
                             result = "Great! I'll use specialized support for your model. What seems to be the problem?"
                             ist_timezone = pytz.timezone("Asia/Kolkata")
@@ -1175,13 +1181,60 @@ async def messages(req):
                         conversation_history = stage_data.get('conversation_history', [])
                         solution_type = stage_data.get('solution_type', "0")
                         vector_file = stage_data.get('vector_file')
-                        current_last_uuid = get_stage(phone_number).get("last_uuid", [])
                         rag_no = stage_data.get('rag_no', 0)
                         user_response = activity.text.lower()
+                        current_last_uuid = get_stage(phone_number).get("last_uuid", [])
+                        session_key = get_stage(phone_number).get("session_key", "")
                         yes_variations = ["yes", "yeah", "yep", "sure", "correct", "right", "ok", "okay", "perfect", "haa"]
                         no_variations = ["no", "not", "nope", "nah", "wrong", "incorrect", "nahi", "na"]
-                        session_key = get_stage(phone_number).get("session_key", "")
+                        
 
+
+                    elif get_stage(phone_number)["stage"] == "no_data":
+                        model_name = activity.text.strip()
+                            # Load model-to-pdf mapping from JSON
+                        with open("pdf_mappings.json", "r") as f:
+                            unique_laptop = json.load(f)
+
+                         # Case-insensitive matching
+                        matched_model = None
+                        for key in unique_laptop:
+                            if model_name.lower() == key.lower():
+                                matched_model = key
+                                break
+
+                        if matched_model:
+                            file_name = unique_laptop[matched_model]
+                            file_key = file_name.split('.')[0]
+
+                            default_pdf_path = "/home/sagar/Master_pdfs/pdfs/"
+                            default_encode_path = "/home/sagar/Master_pdfs/encodings/"
+                            default_chunks_path = "/home/sagar/Master_pdfs/chunks/"
+
+                            pdf_path = default_pdf_path + file_name
+                            encodings_path = default_encode_path + f"{file_key}.npy"
+                            chunks_path = default_chunks_path + f"{file_key}.pkl"
+
+                            pdf_file = pdf_path
+                            vector_file = encodings_path
+                            chunks_file = chunks_path
+                            
+
+
+                            #  Save info into session for future use
+                            set_stage(stage="tech_support", phone_number=phone_number,
+                                       pdf_file=pdf_path,
+                                       vector_file=vector_file,
+                                       chunks_file=chunks_path,
+                                       conversation_history=[],
+                                       solution_type="0",
+                                       rag_no=0)
+                            
+                            await turn_context.send_activity(f"Great! Got your model: {matched_model}. How can I help you?")
+                        else:
+                            await turn_context.send_activity(f" Sorry, I don't have data for model: {model_name}. Please recheck spelling or try another.")
+
+                            
                         cursor.execute("""
                             SELECT assets_serial_number
                             FROM l1_tree 
@@ -1194,12 +1247,13 @@ async def messages(req):
                         # Direct string matching instead of embeddings
                         user_response = user_response.strip().lower()
                         
+                        
                         if solution_type == "shutdown":
                             ist_timezone = pytz.timezone("Asia/Kolkata")
                             current_datetime = dt.datetime.now(ist_timezone)
                             
                             uuid_id = activity.conversation.id
-                            #ession_key = str(uuid.uuid4())
+                            #session_key = str(uuid.uuid4())
                             session_key = get_stage(phone_number).get("session_key", "")
                             issue = "Ram Upgrade"
                             cursor.execute(
@@ -2109,7 +2163,7 @@ async def messages(req):
                                             conn.commit()
                                             clear_stage(phone_number)
                                             data_store(issue, phone_number, activity.conversation.id, session_key)
-                                            #set_stage(stage="tech_support", phone_number=phone_number, last_uuid=current_last_uuid)
+                                            set_stage(stage="tech_support", phone_number=phone_number, last_uuid=current_last_uuid)
                                             await turn_context.send_activity("Thank you for contacting us. Currently All the Agents are Busy\nGenerating Ticket --")
                                             return
                                         

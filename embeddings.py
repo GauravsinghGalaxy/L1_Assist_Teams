@@ -1,17 +1,14 @@
-# 
-
-
 import torch
-from transformers import DPRContextEncoder, DPRContextEncoderTokenizer
+from transformers import BertModel, BertTokenizer  
 
-class DPRCustomEmbeddings:
+class BERTCustomEmbeddings:  
     def __init__(self, device="cpu"):
         self.device = torch.device(device)
-        self.model = DPRContextEncoder.from_pretrained(
-            "facebook/dpr-ctx_encoder-single-nq-base"
+        self.model = BertModel.from_pretrained(      
+            "bert-base-uncased"
         ).to(self.device)
-        self.tokenizer = DPRContextEncoderTokenizer.from_pretrained(
-            "facebook/dpr-ctx_encoder-single-nq-base"
+        self.tokenizer = BertTokenizer.from_pretrained(  
+            "bert-base-uncased"
         )
 
     def embed_documents(self, texts):
@@ -20,12 +17,15 @@ class DPRCustomEmbeddings:
         for text in texts:
             inputs = self.tokenizer(
                 text, return_tensors="pt", truncation=True, max_length=512
-            ).to(self.device)
+            )
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}  
+
             with torch.no_grad():
-                output = self.model(**inputs).pooler_output
-            embeddings.append(output.cpu().numpy()[0])
+                output = self.model(**inputs)
+                cls_embedding = output.last_hidden_state[:, 0, :]  
+            embeddings.append(cls_embedding.cpu().numpy()[0])
         return embeddings
 
-# Factory method to return the embedding instance
+
 def get_embeddings():
-    return DPRCustomEmbeddings(device="cpu")
+    return BERTCustomEmbeddings(device="cpu")  
